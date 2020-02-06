@@ -36,6 +36,8 @@ namespace EtagMiddleware
             var originalBodyFeature = context.Features.Get<IHttpResponseBodyFeature>();
             var etagBody = new EtagBody(originalBodyFeature);
             context.Features.Set<IHttpResponseBodyFeature>(etagBody);
+            
+            
 
             try
             {
@@ -44,6 +46,7 @@ namespace EtagMiddleware
 
                 var hash = ByteArrayToString(etagBody.GetHash());
                 //context.Response.Headers["Etag"] = ByteArrayToString(hash);
+                // TODO : set etag in headers
                 _logger.LogInformation($"Etag: {hash}");
             }
             finally

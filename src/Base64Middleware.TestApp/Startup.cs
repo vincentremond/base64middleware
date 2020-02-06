@@ -32,7 +32,19 @@ namespace Base64Middleware.TestApp
             app.UseMiddleware<Base64Middleware>();
             app.UseMiddleware<EtagMiddleware.EtagMiddleware>();
             app.UseRouting();
-            app.UseEndpoints(endpoints => { endpoints.MapGet("/", async context => { await context.Response.WriteAsync(DateTime.Now.ToString("u")); }); });
+            app.UseEndpoints(
+                endpoints =>
+                {
+                    endpoints.MapGet(
+                        "/",
+                        async context => { await context.Response.WriteAsync("Hello world !"); });
+                    endpoints.MapGet(
+                        "/now",
+                        async context => { await context.Response.WriteAsync(DateTime.Now.ToString("u")); });
+                    endpoints.MapGet(
+                        "/lorem",
+                        async context => { await context.Response.WriteAsync(NLipsum.Core.LipsumGenerator.Generate(200000)); });
+                });
         }
     }
 }

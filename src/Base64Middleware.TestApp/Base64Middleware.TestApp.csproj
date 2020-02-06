@@ -9,4 +9,8 @@
     <ProjectReference Include="..\EtagMiddleware\EtagMiddleware.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NLipsum" Version="1.1.0" />
+  </ItemGroup>
+
 </Project>
