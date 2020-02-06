@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Base64Middleware.TestApp
 {
@@ -15,6 +16,7 @@ namespace Base64Middleware.TestApp
         public void ConfigureServices(
             IServiceCollection services)
         {
+            services.AddLogging(builder => builder.AddConsole());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,10 +29,9 @@ namespace Base64Middleware.TestApp
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.UseMiddleware<Base64Middleware>();
+            app.UseMiddleware<EtagMiddleware.EtagMiddleware>();
             app.UseRouting();
-
             app.UseEndpoints(endpoints => { endpoints.MapGet("/", async context => { await context.Response.WriteAsync(DateTime.Now.ToString("u")); }); });
         }
     }

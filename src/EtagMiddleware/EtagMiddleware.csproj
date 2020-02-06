@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Base64Middleware\Base64Middleware.csproj" />
-    <ProjectReference Include="..\EtagMiddleware\EtagMiddleware.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.1" />
   </ItemGroup>
 
 </Project>
