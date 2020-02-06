@@ -1,40 +1,32 @@
 ﻿using System.IO;
 using System.IO.Pipelines;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Base64Middleware.StreamHelper;
+using EtagMiddleware.StreamHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 
-namespace Base64Middleware
+namespace EtagMiddleware
 {
-    public class Base64Body : IHttpResponseBodyFeature
+    public class EtagBody : IHttpResponseBodyFeature
     {
         private readonly IHttpResponseBodyFeature _originalBodyFeature;
-        private readonly AutoFlushableStream _outputStream = null;
+        private readonly HashableStream _outputStream = null;
         private bool _complete = false;
         private PipeWriter _pipeAdapter = null;
 
-        public Base64Body(
+        public EtagBody(
             IHttpResponseBodyFeature originalBodyFeature)
         {
-            var encryptionStream = CreateEncryptionStream(originalBodyFeature.Stream);
-            _outputStream = new AutoFlushableStream(encryptionStream);
+            _outputStream = new HashableStream(originalBodyFeature.Stream);
             _originalBodyFeature = originalBodyFeature;
-        }
-
-        private static CryptoStream CreateEncryptionStream(
-            Stream originalStream)
-        {
-            return new CryptoStream(originalStream, new ToBase64Transform(), CryptoStreamMode.Write);
         }
 
         public async Task CompleteAsync()
         {
             if (!_complete)
             {
-                await FinishEncryptionAsync();
+                await FinishHashingAsync();
             }
 
             await _originalBodyFeature.CompleteAsync();
@@ -76,7 +68,7 @@ namespace Base64Middleware
             }
         }
 
-        internal async Task FinishEncryptionAsync()
+        internal async Task FinishHashingAsync()
         {
             if (_complete)
             {
@@ -94,6 +86,11 @@ namespace Base64Middleware
             {
                 await _outputStream.DisposeAsync();
             }
+        }
+
+        public byte[] GetHash()
+        {
+            return _outputStream.GetHash();
         }
     }
 }
